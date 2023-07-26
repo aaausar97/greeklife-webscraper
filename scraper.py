@@ -172,25 +172,6 @@ def send_data_to_sheets(rows_to_append, sheet):
                           insert_data_option='INSERT_ROWS', 
                           table_range=range_to_append)
 
-
-## -- old utils --
-
-# RATE LIMITING: instagram API rate limits are 200 requests/hr
-# Scraper will handle rate limiting itself, as long as its the only run
-# and there was enough time between runs. Scrapper assumes there have been no other
-# instances of the application being run or API hits on other devices
-
-def wait():
-    wait = BASE + random.randint(0,RAND)
-    print(f'waiting {wait} seconds until next scrape')
-    time.sleep(wait) # short pause between profiles
-    return
-
-def stall():
-    print(f'waiting {STALL} seconds until next scrape')
-    time.sleep(STALL) # short stall after scraping multiple profile
-    return
-
 ### ----- main() ----- 
 
 def main():
