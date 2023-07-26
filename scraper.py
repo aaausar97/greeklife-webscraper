@@ -1,4 +1,4 @@
-from helper import constants, text_helper, gsheet_helper, post_helper
+from helper import constants, gsheet_helper, post_helper
 from instaloader import Instaloader, Profile, exceptions, RateController
 import gspread
 import random
