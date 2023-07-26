@@ -9,7 +9,6 @@
     "util":{
         "days_to_scrape": 7,
         "base_wait_time": 7,
-        "base_rand_time": 8,
-        "stall_time": 90
+        "base_rand_time": 8.0
     }
 }

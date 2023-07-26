@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from instaloader import Instaloader, Profile, exceptions
+from instaloader import Instaloader, Profile, exceptions, RateController
 from itertools import chain, takewhile
 from PIL import Image
 import gspread
@@ -20,7 +20,6 @@ SINCE = datetime.now()
 UNTIL = SINCE - timedelta(days=config["util"]["days_to_scrape"])
 BASE = config["util"]["base_wait_time"]
 RAND = config["util"]["base_rand_time"]
-STALL = config["util"]["stall_time"]
 
 SHEET_URL = config["google_drive"]["sheet_url"]
 range_to_append = 'A1:G1'
@@ -33,11 +32,21 @@ PHONE_REGEX = r'\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})'
 TAGGED_REGEX = r'\B@[\w\.-]+'
 
 
+class MyRateController(RateController):
+    def sleep(self, secs: float):
+        return super().sleep(secs)
+    def handle_429(self, query_type: str) -> None:
+        print('hit 429; trying again later')
+        return super().handle_429(query_type)
+    def query_waittime(self, query_type: str, current_time: float, untracked_queries: bool = False) -> float:
+        return super().query_waittime(query_type, current_time, untracked_queries) + BASE + random.randint(0,RAND)
+    def wait_before_query(self, query_type: str) -> None:
+        return super().wait_before_query(query_type)
+    
 ### -- start clients --
 
-L = Instaloader() #instaloder client for scraping
+L = Instaloader(rate_controller=lambda ctx: MyRateController(ctx)) #instaloder client for scraping w/ rate controller context
 sheets_client = gspread.service_account(filename='google_creds.json') # gspread client for google sheets interactions
-
 
 ### -- helper functions --
 
@@ -164,13 +173,12 @@ def send_data_to_sheets(rows_to_append, sheet):
                           table_range=range_to_append)
 
 
-## -- utils --
+## -- old utils --
 
 # RATE LIMITING: instagram API rate limits are 200 requests/hr
 # Scraper will handle rate limiting itself, as long as its the only run
 # and there was enough time between runs. Scrapper assumes there have been no other
 # instances of the application being run or API hits on other devices
-
 
 def wait():
     wait = BASE + random.randint(0,RAND)
@@ -190,22 +198,18 @@ def main():
     login_to_insta(username=USERNAME, password=PASSWORD)
     ready_gsheet(sheet=sheet)  
     usernames = get_usernames_from_sheets(sheet=sheet)
-    k=0
     for username in usernames: 
+        if username == '':
+            continue     
+
         try:
             posts = Profile.from_username(L.context, username).get_posts()
         except exceptions.ProfileNotExistsException:
             continue
-
+        
         print(f'scraping {username}\n')
         rows_to_append = scrape_posts(posts=posts)
         send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
-        k += 1
-        if k == 18:
-            stall()
-        else:
-            wait()
-
     print('scraping complete')
 
 if __name__ == "__main__":
