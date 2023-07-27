@@ -2,9 +2,13 @@ from helper import constants, gsheet_helper, post_helper
 from instaloader import Instaloader, Profile, exceptions, RateController
 import gspread
 import random
+import json
 
-USERNAME = constants.USERNAME
-PASSWORD = constants.PASSWORD
+with open('config.json', 'r') as f:
+    config = json.load(f)
+
+    USERNAME = config["instagram"]["username"]
+    PASSWORD = config["instagram"]["password"]
 
 class MyRateController(RateController):
     def sleep(self, secs: float):
