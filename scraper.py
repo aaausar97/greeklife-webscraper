@@ -3,6 +3,8 @@ from instaloader import Instaloader, Profile, exceptions, RateController
 import gspread
 import random
 
+USERNAME = constants.USERNAME
+PASSWORD = constants.PASSWORD
 
 class MyRateController(RateController):
     def sleep(self, secs: float):
@@ -34,7 +36,7 @@ def login_to_insta(username, password):
 
 def main():
     sheet = sheets_client.open_by_url(constants.SHEET_URL)  
-    login_to_insta(username=constants.USERNAME, password=constants.PASSWORD)
+    login_to_insta(username=USERNAME, password=PASSWORD)
     gsheet_helper.ready_gsheet(sheet=sheet)  
     usernames = gsheet_helper.get_usernames_from_sheets(sheet=sheet)
     for username in usernames: 

@@ -57,32 +57,34 @@ class gsheet_helper:
 
 
 class text_helper:
-    def get_phones_emails_and_tags(self, caption, image_text=None):
+    def get_phones(caption, image_text=None):
         caption = caption.replace(' ', '').strip()
-        emails = re.findall(constants.EMAIL_REGEX, caption)
         phones = re.findall(constants.PHONE_REGEX, caption)
-        tagged = re.findall(constants.TAGGED_REGEX, caption)
+        #emails = re.findall(constants.EMAIL_REGEX, caption)
+        #tagged = re.findall(constants.TAGGED_REGEX, caption)
         if image_text:
-            emails_img = re.findall(constants.EMAIL_REGEX, image_text)
             phones_img = re.findall(constants.PHONE_REGEX, image_text) #expand regex for phone numbers
-            tagged_img = re.findall(constants.TAGGED_REGEX, image_text)
-            emails.extend(emails_img)
             phones.extend(phones_img)
-            tagged.extend(tagged_img)
+            #emails_img = re.findall(constants.EMAIL_REGEX, image_text)
+            #tagged_img = re.findall(constants.TAGGED_REGEX, image_text)
+            #emails.extend(emails_img)
+            #tagged.extend(tagged_img)
 
-        all_emails = ''
         all_phones = ''
-        all_tagged = ''
-        for email in emails:
-            all_emails += f'{email}\n'
+        # all_emails = ''
+        # all_tagged = ''
+
         for phone in phones:
             all_phones += f'{phone}\n'
+        '''
+        for email in emails:
+            all_emails += f'{email}\n'
         for tag in tagged:
             all_tagged += f'{tag}\n'
+        '''
+        return all_phones
 
-        return (all_emails, all_phones, all_tagged)
-
-    def extract_text_from_image(self, url_to_image):
+    def extract_text_from_image(url_to_image):
         response = requests.get(url_to_image)
         img = Image.open(io.BytesIO(response.content))
         text = pytesseract.image_to_string(img)
@@ -91,7 +93,7 @@ class text_helper:
         return text
 
 class post_helper:
-    def scrape_video(self, post):
+    def scrape_video(post):
         post_shortcode = post.shortcode
         post_url = f'https://instagram.com/p/{post_shortcode}/'
         post_profile = post.owner_profile
@@ -100,22 +102,22 @@ class post_helper:
         post_thumbnail_url = post.url
         post_video_url = post.video_url
         image_text = text_helper.extract_text_from_image(post_thumbnail_url)
-        email, phone, tagged = text_helper.get_phones_emails_and_tags(caption=post_caption, image_text=image_text)
+        phone = text_helper.get_phones_emails_and_tags(caption=post_caption, image_text=image_text)
         values_to_append = [str(post.date_local), 
                             str(profile_username), 
                             str(profile_full_name), 
                             str(phone), 
-                            str(email), 
-                            str(tagged), 
+                            '',
+                            '',
                             str(post_caption), 
                             str(image_text),
                             str(post_url), 
                             str(post_video_url)]
-        if not email and not phone and not tagged:
+        if not phone:
             return None
         return values_to_append
 
-    def scrape_pic(self, post):
+    def scrape_pic(post):
         post_shortcode = post.shortcode
         post_url = f'https://instagram.com/p/{post_shortcode}/'
         post_profile = post.owner_profile
@@ -123,29 +125,29 @@ class post_helper:
         post_caption = post.caption if post.caption else ""
         post_pic_url = post.url
         image_text = text_helper.extract_text_from_image(post_pic_url)
-        email, phone, tagged = text_helper.get_phones_emails_and_tags(caption=post_caption, image_text=image_text)
+        phone = text_helper.get_phones_emails_and_tags(caption=post_caption, image_text=image_text)
         values_to_append = [str(post.date_local), 
                             str(profile_username), 
                             str(profile_full_name), 
                             str(phone), 
-                            str(email), 
-                            str(tagged), 
+                            '', 
+                            '', 
                             str(post_caption), 
                             str(image_text),
                             str(post_url), 
                             str(post_pic_url)]   
-        if not email and not phone and not tagged:
+        if not phone:
             return None
         return values_to_append
 
-    def scrape_posts(self, posts):
+    def scrape_posts(posts):
         rows_to_append = []
         for post in takewhile(lambda p: p.date_utc >= constants.UNTIL, posts):
             print(post)
             if post.is_video:
-                row_to_append = self.scrape_video(post)
+                row_to_append = post_helper.scrape_video(post)
             else:
-                row_to_append = self.scrape_pic(post)
+                row_to_append = post_helper.scrape_pic(post)
             if row_to_append:
                 rows_to_append.append(row_to_append)
         return rows_to_append
