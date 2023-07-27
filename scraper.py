@@ -17,12 +17,6 @@ class MyRateController(RateController):
     
 ### -- start clients --
 
-with open('config.json', 'r') as f:
-    config = json.load(f)
-
-USERNAME = config["instagram"]["username"]
-PASSWORD = config["instagram"]["password"]
-
 L = Instaloader(rate_controller=lambda ctx: MyRateController(ctx)) #instaloder client for scraping w/ rate controller context
 sheets_client = gspread.service_account(filename='google_creds.json') # gspread client for google sheets interactions
 
@@ -39,6 +33,12 @@ def login_to_insta(username, password):
 ### ----- main() ----- 
 
 def main():
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    USERNAME = config["instagram"]["username"]
+    PASSWORD = config["instagram"]["password"]
+    print(USERNAME, PASSWORD)
+    
     sheet = sheets_client.open_by_url(constants.SHEET_URL)  
     login_to_insta(username=USERNAME, password=PASSWORD)
     gsheet_helper.ready_gsheet(sheet=sheet)  
