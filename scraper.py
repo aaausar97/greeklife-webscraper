@@ -4,12 +4,6 @@ import gspread
 import random
 import json
 
-with open('config.json', 'r') as f:
-    config = json.load(f)
-
-    USERNAME = config["instagram"]["username"]
-    PASSWORD = config["instagram"]["password"]
-
 class MyRateController(RateController):
     def sleep(self, secs: float):
         return super().sleep(secs)
@@ -22,6 +16,12 @@ class MyRateController(RateController):
         return super().wait_before_query(query_type)
     
 ### -- start clients --
+
+with open('config.json', 'r') as f:
+    config = json.load(f)
+
+USERNAME = config["instagram"]["username"]
+PASSWORD = config["instagram"]["password"]
 
 L = Instaloader(rate_controller=lambda ctx: MyRateController(ctx)) #instaloder client for scraping w/ rate controller context
 sheets_client = gspread.service_account(filename='google_creds.json') # gspread client for google sheets interactions
