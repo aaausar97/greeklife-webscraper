@@ -1,14 +1,6 @@
 from helper import constants, gsheet_helper, post_helper
 from instaloader import Instaloader, Profile, exceptions, RateController, ConnectionException
 import gspread
-import random
-import json
-import os
-from argparse import ArgumentParser
-from glob import glob
-from os.path import expanduser
-from platform import system
-from sqlite3 import OperationalError, connect
 
 USERNAME = constants.USERNAME
 PASSWORD = constants.PASSWORD
@@ -37,8 +29,6 @@ def login_to_insta():
     except Exception as e:
         L.login(USERNAME, PASSWORD)
         L.save_session_to_file(filename=USERNAME)
-
-
 
 ### ----- main() ----- 
 
