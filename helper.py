@@ -59,28 +59,15 @@ class text_helper:
     def get_phones(caption, image_text=None):
         caption = caption.replace(' ', '').strip()
         phones = re.findall(constants.PHONE_REGEX, caption)
-        #emails = re.findall(constants.EMAIL_REGEX, caption)
-        #tagged = re.findall(constants.TAGGED_REGEX, caption)
         if image_text:
             phones_img = re.findall(constants.PHONE_REGEX, image_text) #expand regex for phone numbers
             phones.extend(phones_img)
-            #emails_img = re.findall(constants.EMAIL_REGEX, image_text)
-            #tagged_img = re.findall(constants.TAGGED_REGEX, image_text)
-            #emails.extend(emails_img)
-            #tagged.extend(tagged_img)
 
         all_phones = ''
-        # all_emails = ''
-        # all_tagged = ''
 
         for phone in phones:
             all_phones += f'{phone}\n'
-        '''
-        for email in emails:
-            all_emails += f'{email}\n'
-        for tag in tagged:
-            all_tagged += f'{tag}\n'
-        '''
+
         return all_phones
 
     def extract_text_from_image(url_to_image):

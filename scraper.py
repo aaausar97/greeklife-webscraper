@@ -20,7 +20,7 @@ class MyRateController(RateController):
         print('hit 429; trying again later')
         return super().handle_429(query_type)
     def query_waittime(self, query_type: str, current_time: float, untracked_queries: bool = False) -> float:
-        return super().query_waittime(query_type, current_time, untracked_queries) + constants.BASE + random.randint(0, constants.RAND)
+        return super().query_waittime(query_type, current_time, untracked_queries)
     def wait_before_query(self, query_type: str) -> None:
         return super().wait_before_query(query_type)
 
@@ -43,12 +43,6 @@ def login_to_insta():
 ### ----- main() ----- 
 
 def main():
-    print(USERNAME, PASSWORD)
-    p = ArgumentParser()
-    p.add_argument("-c", "--cookiefile")
-    p.add_argument("-f", "--sessionfile")
-    args = p.parse_args()
-
     sheet = sheets_client.open_by_url(constants.SHEET_URL)  
     gsheet_helper.ready_gsheet(sheet=sheet)
     login_to_insta()
