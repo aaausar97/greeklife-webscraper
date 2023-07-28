@@ -24,6 +24,7 @@ sheets_client = gspread.service_account(filename='google_creds.json') # gspread 
 ### -- helper functions --
 
 def login_to_insta():
+    print(USERNAME, PASSWORD)
     try:
         L.load_session_from_file(username=USERNAME, filename=USERNAME)
     except Exception as e:
