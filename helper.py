@@ -101,7 +101,7 @@ class post_helper:
         post_thumbnail_url = post.url
         post_video_url = post.video_url
         image_text = text_helper.extract_text_from_image(post_thumbnail_url)
-        phone = text_helper.get_phones_emails_and_tags(caption=post_caption, image_text=image_text)
+        phone = text_helper.get_phones(caption=post_caption, image_text=image_text)
         values_to_append = [str(post.date_local), 
                             str(profile_username), 
                             str(profile_full_name), 
@@ -124,7 +124,7 @@ class post_helper:
         post_caption = post.caption if post.caption else ""
         post_pic_url = post.url
         image_text = text_helper.extract_text_from_image(post_pic_url)
-        phone = text_helper.get_phones_emails_and_tags(caption=post_caption, image_text=image_text)
+        phone = text_helper.get_phones(caption=post_caption, image_text=image_text)
         values_to_append = [str(post.date_local), 
                             str(profile_username), 
                             str(profile_full_name), 
