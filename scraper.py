@@ -3,6 +3,7 @@ from instaloader import Instaloader, Profile, exceptions, RateController, Connec
 import gspread
 import random
 import json
+import os
 from argparse import ArgumentParser
 from glob import glob
 from os.path import expanduser
@@ -30,43 +31,14 @@ sheets_client = gspread.service_account(filename='google_creds.json') # gspread 
 
 ### -- helper functions --
 
-def login_to_insta(username, args):
+def login_to_insta():
     try:
-        L.load_session_from_file(filename=username)
-    except:
-        try:
-            import_session(args.cookiefile or get_cookiefile(), args.sessionfile)
-        except (ConnectionException, OperationalError) as e:
-            raise SystemExit("Cookie import failed: {}".format(e))
+        L.load_session_from_file(username=USERNAME, filename=USERNAME)
+    except Exception as e:
+        L.login(USERNAME, PASSWORD)
+        L.save_session_to_file(filename=USERNAME)
 
-def get_cookiefile():
-    default_cookiefile = {
-        "Windows": "~/AppData/Roaming/Mozilla/Firefox/Profiles/*/cookies.sqlite",
-        "Darwin": "~/Library/Application Support/Firefox/Profiles/*/cookies.sqlite",
-    }.get(system(), "~/.mozilla/firefox/*/cookies.sqlite")
-    cookiefiles = glob(expanduser(default_cookiefile))
-    if not cookiefiles:
-        raise SystemExit("No Firefox cookies.sqlite file found. Use -c COOKIEFILE.")
-    return cookiefiles[0]
 
-def import_session(cookiefile, sessionfile):
-    print("Using cookies from {}.".format(cookiefile))
-    conn = connect(f"file:{cookiefile}?immutable=1", uri=True)
-    try:
-        cookie_data = conn.execute(
-            "SELECT name, value FROM moz_cookies WHERE baseDomain='instagram.com'"
-        )
-    except OperationalError:
-        cookie_data = conn.execute(
-            "SELECT name, value FROM moz_cookies WHERE host LIKE '%instagram.com'"
-        )
-    L.context._session.cookies.update(cookie_data)
-    username = L.test_login()
-    if not username:
-        raise SystemExit("Not logged in. Are you logged in successfully in Firefox?")
-    print("Imported session cookie for {}.".format(username))
-    L.context.username = username
-    L.save_session_to_file(sessionfile)
 
 ### ----- main() ----- 
 
@@ -79,7 +51,7 @@ def main():
 
     sheet = sheets_client.open_by_url(constants.SHEET_URL)  
     gsheet_helper.ready_gsheet(sheet=sheet)
-    login_to_insta(username=USERNAME, args=args)
+    login_to_insta()
 
     usernames = gsheet_helper.get_usernames_from_sheets(sheet=sheet)
     for username in usernames: 
