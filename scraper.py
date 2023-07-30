@@ -1,6 +1,7 @@
 from helper import constants, gsheet_helper, post_helper
 from instaloader import Instaloader, Profile, exceptions, RateController, ConnectionException
 import gspread
+import random
 
 USERNAME = constants.USERNAME
 PASSWORD = constants.PASSWORD
@@ -12,7 +13,7 @@ class MyRateController(RateController):
         print('hit 429; trying again later')
         return super().handle_429(query_type)
     def query_waittime(self, query_type: str, current_time: float, untracked_queries: bool = False) -> float:
-        return super().query_waittime(query_type, current_time, untracked_queries)
+        return super().query_waittime(query_type, current_time, untracked_queries) + constants.BASE + random.randint(0, constants.RAND)
     def wait_before_query(self, query_type: str) -> None:
         return super().wait_before_query(query_type)
 
@@ -36,7 +37,7 @@ def login_to_insta():
 def main():
     sheet = sheets_client.open_by_url(constants.SHEET_URL)  
     gsheet_helper.ready_gsheet(sheet=sheet)
-    login_to_insta()
+    #login_to_insta()
 
     usernames = gsheet_helper.get_usernames_from_sheets(sheet=sheet)
     for username in usernames: 
