@@ -31,7 +31,7 @@ sheets_client = gspread.service_account(filename='google_creds.json') # gspread 
 ### -- helper functions --
 
 def login_to_insta():
-    cwd = os.path.dirname()
+    cwd = os.getcwd()
     session_filepath = os.path.join(cwd, f'session-{USERNAME}')
     print(USERNAME, PASSWORD)
     if not os.path.exists(session_filepath):
