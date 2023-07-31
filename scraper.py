@@ -2,35 +2,48 @@ from helper import constants, gsheet_helper, post_helper
 from instaloader import Instaloader, Profile, exceptions, RateController, ConnectionException
 import gspread
 import random
+import time
+import os
 
 USERNAME = constants.USERNAME
 PASSWORD = constants.PASSWORD
 
 class MyRateController(RateController):
     def sleep(self, secs: float):
-        return super().sleep(secs)
+        rand = float(constants.BASE + random.randint(0, constants.RAND))
+        return super().sleep(secs + rand)
     def handle_429(self, query_type: str) -> None:
-        print('hit 429; trying again later')
+        print('hit 429')
         return super().handle_429(query_type)
     def query_waittime(self, query_type: str, current_time: float, untracked_queries: bool = False) -> float:
-        return super().query_waittime(query_type, current_time, untracked_queries) + constants.BASE + random.randint(0, constants.RAND)
+        return super().query_waittime(query_type, current_time, untracked_queries) 
     def wait_before_query(self, query_type: str) -> None:
         return super().wait_before_query(query_type)
 
 ### -- start clients --
 
-L = Instaloader(rate_controller=lambda ctx: MyRateController(ctx)) #instaloder client for scraping w/ rate controller context
+L = Instaloader(sanitize_paths=True, 
+                rate_controller=lambda ctx: MyRateController(ctx), 
+                fatal_status_codes=['302'],
+                iphone_support=False,
+                download_videos=False,
+                max_connection_attempts=1,
+                request_timeout=1800,
+            )
 sheets_client = gspread.service_account(filename='google_creds.json') # gspread client for google sheets interactions
 
 ### -- helper functions --
 
 def login_to_insta():
+    cwd = os.path.dirname()
+    session_filepath = os.path.join(cwd, f'session-{USERNAME}')
     print(USERNAME, PASSWORD)
-    try:
-        L.load_session_from_file(username=USERNAME, filename=USERNAME)
-    except Exception as e:
+    if not os.path.exists(session_filepath):
         L.login(USERNAME, PASSWORD)
-        L.save_session_to_file(filename=USERNAME)
+        L.save_session_to_file(filename=session_filepath)
+    else:
+        L.load_session_from_file(username=USERNAME, filename=session_filepath)
+
 
 ### ----- main() ----- 
 
@@ -45,13 +58,21 @@ def main():
             continue     
 
         try:
-            posts = Profile.from_username(L.context, username).get_posts()
-        except exceptions.ProfileNotExistsException:
+            profile = Profile.from_username(L.context, username)
+        except Exception as e:
+            print(f'error: {e}')
             continue
-        
-        print(f'scraping {username}\n')
+        time.sleep(float(constants.BASE) + random.randint(0, 15))
+        try:
+            posts = profile.get_posts()
+        except Exception as e:
+            print(f'error: {e}')
+            continue
+        print(f'scraping {username}')
         rows_to_append = post_helper.scrape_posts(posts=posts)
         gsheet_helper.send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
+        print('sheet updated\n')
+        time.sleep(float(constants.BASE + constants.RAND))
     print('scraping complete')
 
 if __name__ == "__main__":
