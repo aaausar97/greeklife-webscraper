@@ -52,7 +52,7 @@ def main():
     for username in usernames: 
         if username == '':
             continue     
-
+        
         try:
             profile = Profile.from_username(L.context, username)
         except Exception as e:
@@ -64,10 +64,13 @@ def main():
         except Exception as e:
             print(f'error: {e}')
             continue
+
         print(f'scraping {username}')
         rows_to_append = post_helper.scrape_posts(posts=posts)
+        
         gsheet_helper.send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
         print('sheet updated\n')
+        
         time.sleep(float(constants.BASE + constants.RAND))
     print('scraping complete')
 
