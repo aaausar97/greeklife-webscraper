@@ -15,10 +15,6 @@ class MyRateController(RateController):
     def handle_429(self, query_type: str) -> None:
         print('hit 429')
         return super().handle_429(query_type)
-    def query_waittime(self, query_type: str, current_time: float, untracked_queries: bool = False) -> float:
-        return super().query_waittime(query_type, current_time, untracked_queries) 
-    def wait_before_query(self, query_type: str) -> None:
-        return super().wait_before_query(query_type)
 
 ### -- start clients --
 
@@ -50,7 +46,7 @@ def login_to_insta():
 def main():
     sheet = sheets_client.open_by_url(constants.SHEET_URL)  
     gsheet_helper.ready_gsheet(sheet=sheet)
-    #login_to_insta()
+    login_to_insta()
 
     usernames = gsheet_helper.get_usernames_from_sheets(sheet=sheet)
     for username in usernames: 
