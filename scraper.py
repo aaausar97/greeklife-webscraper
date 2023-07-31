@@ -58,7 +58,7 @@ def main():
         except Exception as e:
             print(f'error: {e}')
             continue
-        time.sleep(float(constants.BASE) + random.randint(0, 15))
+        time.sleep(float(5 + random.randint(0, 25)))
         try:
             posts = profile.get_posts()
         except Exception as e:
@@ -70,8 +70,7 @@ def main():
         
         gsheet_helper.send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
         print('sheet updated\n')
-        
-        time.sleep(float(constants.BASE + constants.RAND))
+        #time.sleep(float(constants.BASE + constants.RAND))
     print('scraping complete')
 
 if __name__ == "__main__":
