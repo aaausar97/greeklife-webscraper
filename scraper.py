@@ -21,6 +21,7 @@ class MyRateController(RateController):
 L = Instaloader(sanitize_paths=True, 
                 rate_controller=lambda ctx: MyRateController(ctx), 
                 fatal_status_codes=['302'],
+                iphone_support=False,
                 download_videos=False,
                 max_connection_attempts=1,
                 request_timeout=1800,
