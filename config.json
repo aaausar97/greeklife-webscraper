@@ -1,14 +1,14 @@
 {
     "instagram": {
-        "username": "skadoodledoodledoo",
-        "password": "Qwerty86"
+        "username": "wotahe4559",
+        "password": "strongpassword"
     },
     "google_drive": {
         "sheet_url": "https://docs.google.com/spreadsheets/d/1OVwyEAP9rxZ-XTMc0FcrpItxPiUDwclOqXP3FAc6afA/" 
     },
     "util":{
         "days_to_scrape": 225,
-        "base_wait_time": 45,
-        "base_rand_time": 45
+        "base_wait_time": 20,
+        "base_rand_time": 5
     }
 }
