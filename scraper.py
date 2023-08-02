@@ -62,7 +62,7 @@ def main():
         gsheet_helper.send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
         print('sheet updated')
 
-        post_scrape_wait = float(time.sleep(min(random.expovariate(0.6), constants.BASE)))
+        post_scrape_wait = float(min(random.expovariate(0.6), constants.BASE))
         print(f'waiting {post_scrape_wait} seconds before next scrape\n')
         time.sleep(post_scrape_wait)
     print('scraping complete')
