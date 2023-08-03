@@ -70,12 +70,12 @@ def main():
     usernames = gsheet_helper.get_usernames_from_sheets(sheet=sheet)
     random.shuffle(usernames)
     print('scraping\n')
-    k=0
+    k=1
     for username in usernames:
         if username == '': continue
         wait(k)
         k+=1
-        
+
         try:
             profile = Profile.from_username(L.context, username)
         except Exception as e:
