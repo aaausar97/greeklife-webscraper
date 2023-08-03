@@ -42,6 +42,24 @@ def handle_logout():
     time.sleep(delay)
     refresh_session()
 
+def post_250_wait():
+    delay = random.randint(20, 45)*60
+    print('hit 250 scrapes:\nwaiting {} seconds before next scrape'.format(delay))
+    time.sleep(delay)
+
+def post_500_wait():
+    delay = 60*60
+    print('hit 500 scrapes:\nwaiting {} seconds before next scrape'.format(delay))
+    time.sleep(delay)
+
+def wait(k):
+    if k%250 == 0: post_250_wait()
+    elif k%500 == 0: post_500_wait()
+    else:
+        post_scrape_wait = float(constants.BASE + min(random.expovariate(.6, constants.RAND)))
+        print(f'waiting {post_scrape_wait} seconds before next scrape\n')
+        time.sleep(post_scrape_wait)    
+    return
 ### ----- main() ----- 
 
 def main():
@@ -54,10 +72,10 @@ def main():
     print('scraping\n')
     k=0
     for username in usernames:
-        if username == '': continue    
-        if k%250 == 0: time.sleep(random.int(30, 45)*60)
-        if k%500 == 0: time.sleep(60*60)
+        if username == '': continue
+        wait(k)
         k+=1
+        
         try:
             profile = Profile.from_username(L.context, username)
         except Exception as e:
@@ -74,10 +92,6 @@ def main():
         rows_to_append = post_helper.scrape_posts(posts=posts)
         gsheet_helper.send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
         print('sheet updated')
-
-        post_scrape_wait = float(constants.BASE + min(random.expovariate(.6, constants.RAND)))
-        print(f'waiting {post_scrape_wait} seconds before next scrape\n')
-        time.sleep(post_scrape_wait)
     print('scraping complete')
 
 if __name__ == "__main__":
