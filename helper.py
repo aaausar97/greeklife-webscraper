@@ -28,6 +28,7 @@ class constants:
     PHONE_REGEX = r'\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})'
     TAGGED_REGEX = r'\B@[\w\.-]+'
 
+    LOGOUT_ERR = "Redirected to login page. You've been logged out, please wait some time, recreate the session and try again"
 
 
 class gsheet_helper:
@@ -53,7 +54,6 @@ class gsheet_helper:
             for profile in profiles_list:
                 formated_profile_list.append(profile[len(prefix):].rstrip('/')) #extract username from URLs
         return formated_profile_list
-
 
 class text_helper:
     def get_phones(caption, image_text=None):
