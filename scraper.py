@@ -56,7 +56,7 @@ def wait(k):
     if k%250 == 0: post_250_wait()
     elif k%500 == 0: post_500_wait()
     else:
-        post_scrape_wait = float(constants.BASE + min(random.expovariate(.6, constants.RAND)))
+        post_scrape_wait = float(constants.BASE + min(random.expovariate(0.6), constants.RAND))
         print(f'waiting {post_scrape_wait} seconds before next scrape\n')
         time.sleep(post_scrape_wait)    
     return

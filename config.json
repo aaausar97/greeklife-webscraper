@@ -8,7 +8,7 @@
     },
     "util":{
         "days_to_scrape": 225,
-        "base_wait_time": 5,
+        "base_wait_time": 10,
         "base_rand_time": 10
     }
 }
