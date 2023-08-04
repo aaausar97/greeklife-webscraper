@@ -4,11 +4,12 @@
         "password": "starwars12"
     },
     "google_drive": {
-        "sheet_url": "https://docs.google.com/spreadsheets/d/1OVwyEAP9rxZ-XTMc0FcrpItxPiUDwclOqXP3FAc6afA/" 
+        "sheet_url": "https://docs.google.com/spreadsheets/d/1OVwyEAP9rxZ-XTMc0FcrpItxPiUDwclOqXP3FAc6afA/",
+        "found_url": "https://docs.google.com/spreadsheets/d/1FDnSnXHokmeePUKnt4yQK3kLIV5wN5oASm9ifUngLZM/" 
     },
     "util":{
         "days_to_scrape": 225,
-        "base_wait_time": 10,
+        "base_wait_time": 15,
         "base_rand_time": 10
     }
 }

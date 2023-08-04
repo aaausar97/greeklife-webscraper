@@ -19,6 +19,7 @@ class constants:
     RAND = config["util"]["base_rand_time"]
 
     SHEET_URL = config["google_drive"]["sheet_url"]
+    FOUND_URL = config["google_drive"]["found_url"]
     range_to_append = 'A1:G1'
 
     USERNAME = config["instagram"]["username"]
@@ -47,13 +48,19 @@ class gsheet_helper:
     def get_usernames_from_sheets(sheet):
         prefix = 'https://www.instagram.com/'
         formated_profile_list = []
-        for n in range(1,6): # update to use worksheet name
+        for n in range(1,29): # update to use worksheet name
             worksheet = sheet.get_worksheet(n)
             profiles = worksheet.get_values('A:A')
             profiles_list = list(chain(*profiles))
             for profile in profiles_list:
                 formated_profile_list.append(profile[len(prefix):].rstrip('/')) #extract username from URLs
         return formated_profile_list
+    
+    def get_found_profiles(sheet):
+        worksheet = sheet.get_worksheet(0)
+        profiles = worksheet.get_values('B2:B')
+        found_profiles_list = list(chain(*profiles))
+        return found_profiles_list
 
 class text_helper:
     def get_phones(caption, image_text=None):

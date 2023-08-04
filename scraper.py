@@ -1,5 +1,5 @@
 from helper import constants, gsheet_helper, post_helper
-from instaloader import Instaloader, Profile
+from instaloader import Instaloader, Profile, RateController
 import gspread
 import random
 import time
@@ -48,13 +48,13 @@ def post_250_wait():
     time.sleep(delay)
 
 def post_500_wait():
-    delay = 60*60
+    delay = 2*60*60
     print('hit 500 scrapes:\nwaiting {} seconds before next scrape'.format(delay))
     time.sleep(delay)
 
 def wait(k):
     if k%250 == 0: post_250_wait()
-    elif k%500 == 0: post_500_wait()
+    elif k%501 == 0: post_500_wait()
     else:
         post_scrape_wait = float(constants.BASE + min(random.expovariate(0.6), constants.RAND))
         print(f'waiting {post_scrape_wait} seconds before next scrape\n')
@@ -64,11 +64,14 @@ def wait(k):
 
 def main():
     sheet = sheets_client.open_by_url(constants.SHEET_URL)  
+    found_sheet = sheets_client.open_by_url(constants.FOUND_URL)
     gsheet_helper.ready_gsheet(sheet=sheet)
+    search = gsheet_helper.get_usernames_from_sheets(sheet=sheet)
+    found_usernames = gsheet_helper.get_found_profiles(sheet=found_sheet)
+    usernames = [a for a in search if a not in found_usernames]
+    random.shuffle(usernames)
     print('sheet ready\n')
     login_to_insta()
-    usernames = gsheet_helper.get_usernames_from_sheets(sheet=sheet)
-    random.shuffle(usernames)
     print('scraping\n')
     k=1
     for username in usernames:
