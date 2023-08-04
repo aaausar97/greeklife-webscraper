@@ -48,7 +48,7 @@ class gsheet_helper:
     def get_usernames_from_sheets(sheet):
         prefix = 'https://www.instagram.com/'
         formated_profile_list = []
-        for n in range(1,29): # update to use worksheet name
+        for n in range(1,11): # update to use worksheet name
             worksheet = sheet.get_worksheet(n)
             profiles = worksheet.get_values('A:A')
             profiles_list = list(chain(*profiles))
