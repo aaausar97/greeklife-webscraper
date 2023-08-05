@@ -43,12 +43,12 @@ def handle_logout():
     refresh_session()
 
 def post_250_wait():
-    delay = random.randint(20, 45)*60
+    delay = random.randint(30, 55)*60
     print('hit 250 scrapes:\nwaiting {} seconds before next scrape'.format(delay))
     time.sleep(delay)
 
 def post_500_wait():
-    delay = 2*60*60
+    delay = 2.5*60*60
     print('hit 500 scrapes:\nwaiting {} seconds before next scrape'.format(delay))
     time.sleep(delay)
 
