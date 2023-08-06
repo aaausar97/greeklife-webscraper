@@ -1,6 +1,6 @@
 {
     "instagram": {
-        "username": "terysmith8",
+        "username": "aushastar",
         "password": "starwars13"
     },
     "google_drive": {
@@ -9,7 +9,7 @@
     },
     "util":{
         "days_to_scrape": 225,
-        "base_wait_time": 20,
+        "base_wait_time": 30,
         "base_rand_time": 10
     }
 }
