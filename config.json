@@ -8,7 +8,7 @@
         "found_url": "https://docs.google.com/spreadsheets/d/12mBWz8A7FTbxB5MY83D4zgXO56r6Ur6LSqjReGRtW-o/" 
     },
     "util":{
-        "days_to_scrape": 225,
+        "days_to_scrape": 7,
         "base_wait_time": 30,
         "base_rand_time": 10
     }
