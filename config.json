@@ -1,11 +1,10 @@
 {
     "instagram": {
-        "username": "joshmorton53",
-        "password": "starwars13"
+        "username": "username",
+        "password": "password"
     },
     "google_drive": {
-        "sheet_url": "https://docs.google.com/spreadsheets/d/1OVwyEAP9rxZ-XTMc0FcrpItxPiUDwclOqXP3FAc6afA/",
-        "found_url": "https://docs.google.com/spreadsheets/d/12mBWz8A7FTbxB5MY83D4zgXO56r6Ur6LSqjReGRtW-o/" 
+        "sheet_url": "sheet_url"
     },
     "util":{
         "days_to_scrape": 7,

@@ -20,7 +20,6 @@ class constants:
     RAND = config["util"]["base_rand_time"]
 
     SHEET_URL = config["google_drive"]["sheet_url"]
-    FOUND_URL = config["google_drive"]["found_url"]
     range_to_append = 'A1:G1'
 
     USERNAME = config["instagram"]["username"]
