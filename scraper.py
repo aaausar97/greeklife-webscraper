@@ -57,18 +57,18 @@ def handle_logout():
     refresh_session()
 
 def post_100_wait():
-    delay = random.randint(10, 20)*60
-    logging.info('hit 100 scrapes: waiting {} seconds before next scrape'.format(delay))  
+    delay = random.randint(15, 30)*60
+    print('hit 100 scrapes: waiting {} seconds before next scrape'.format(delay))  
     time.sleep(delay)
 
 def post_250_wait():
-    delay = random.randint(30, 50)*60
-    logging.info('hit 250 scrapes: waiting {} seconds before next scrape'.format(delay))
+    delay = random.randint(45, 60)*60
+    print('hit 250 scrapes: waiting {} seconds before next scrape'.format(delay))
     time.sleep(delay)
 
 def post_500_wait():
     delay = random.randint(1,3)*45*60
-    logging.info('hit 500 scrapes: waiting {} seconds before next scrape'.format(delay))
+    print('hit 500 scrapes: waiting {} seconds before next scrape'.format(delay))
     time.sleep(delay)
 
 def wait(k):
@@ -77,7 +77,7 @@ def wait(k):
     elif k%100 == 0: post_100_wait()
     else:
         post_scrape_wait = float(constants.BASE + min(random.expovariate(0.6), constants.RAND))
-        logging.info(f'waiting {post_scrape_wait} seconds before next scrape')
+        print(f'waiting {post_scrape_wait} seconds before next scrape')
         time.sleep(post_scrape_wait)    
     return
 ### ----- main() ----- 
