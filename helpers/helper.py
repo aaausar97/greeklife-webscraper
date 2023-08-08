@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from itertools import chain, takewhile
 from PIL import Image
-from weekly_batch import Batches
+from helpers.weekly_batch import Batches
 import io
 import json
 import pytesseract
