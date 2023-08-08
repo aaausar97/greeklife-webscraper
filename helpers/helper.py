@@ -9,7 +9,6 @@ import re
 import requests
 
 
-
 with open('config.json', 'r') as f:
     config = json.load(f)
 
@@ -30,8 +29,6 @@ class constants:
     EMAIL_REGEX = r'[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+'
     PHONE_REGEX = r'\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})'
     TAGGED_REGEX = r'\B@[\w\.-]+'
-
-    LOGOUT_ERR = "Redirected to login page. You've been logged out, please wait some time, recreate the session and try again"
 
 
 class gsheet_helper:

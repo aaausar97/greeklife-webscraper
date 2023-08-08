@@ -5,13 +5,10 @@ import gspread
 import random
 
 
-
 with open('config.json', 'r') as f:
     config = json.load(f)
 
 sheets_client = gspread.service_account(filename='google_creds.json') # gspread client for google sheets interactions
-
-
 
 ## -- CONSTANTS AND CONFIGS --
 class Constants:
