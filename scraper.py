@@ -87,8 +87,8 @@ def main():
     gsheet_helper.ready_gsheet(sheet=sheet)
     search = gsheet_helper.get_usernames_from_sheets(sheet=sheet)
     random.shuffle(search)
-    logging.info(f'batch to run: {search}')
     login_to_insta()
+    logging.info(f'batch to run: {search}')
     logging.info('scraping')
     k=1
     for username in search:
@@ -98,17 +98,18 @@ def main():
         try:
             profile = Profile.from_username(L.context, username)
         except Exception as e:
-            logging.ERROR(f'error: {e}')
+            logging.error(f'error: {e}')
             pass
         try:
             posts = profile.get_posts()
         except Exception as e:
-            logging.ERROR(f'error: {e}')
+            logging.error(f'error: {e}')
             pass
         logging.info(f'scraping {username}:{k}')
         rows_to_append = post_helper.scrape_posts(posts=posts)
         gsheet_helper.send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
         logging.info('sheet updated')
+    print('scraping complete')
     logging.info('scraping complete')
 
 if __name__ == "__main__":
