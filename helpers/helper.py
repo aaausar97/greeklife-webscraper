@@ -1,11 +1,12 @@
-from itertools import chain, takewhile
 from datetime import datetime, timedelta
-import re
-import requests
-import pytesseract
+from itertools import chain, takewhile
 from PIL import Image
+from helpers.weekly_batch import Batches
 import io
 import json
+import pytesseract
+import re
+import requests
 
 
 with open('config.json', 'r') as f:
@@ -19,7 +20,6 @@ class constants:
     RAND = config["util"]["base_rand_time"]
 
     SHEET_URL = config["google_drive"]["sheet_url"]
-    FOUND_URL = config["google_drive"]["found_url"]
     range_to_append = 'A1:G1'
 
     USERNAME = config["instagram"]["username"]
@@ -28,8 +28,6 @@ class constants:
     EMAIL_REGEX = r'[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+'
     PHONE_REGEX = r'\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})'
     TAGGED_REGEX = r'\B@[\w\.-]+'
-
-    LOGOUT_ERR = "Redirected to login page. You've been logged out, please wait some time, recreate the session and try again"
 
 
 class gsheet_helper:
@@ -46,16 +44,14 @@ class gsheet_helper:
                             table_range=constants.range_to_append)
         
     def get_usernames_from_sheets(sheet):
-        prefix = 'https://www.instagram.com/'
-        formated_profile_list = []
-        for n in range(1,11): # update to use worksheet name
-            worksheet = sheet.get_worksheet(n)
-            profiles = worksheet.get_values('A:A')
-            profiles_list = list(chain(*profiles))
-            for profile in profiles_list:
-                formated_profile_list.append(profile[len(prefix):].rstrip('/')) #extract username from URLs
-        return formated_profile_list
-    
+        batches = Batches()
+        batches_list = batches.batches
+        batches_list = batches.batch_profiles_from_list(sheet)
+        batch_to_run = batches_list[batches.batch_emerg]
+        if batches.constants.num_batch_to_run:
+            batch_to_run = batches_list[batches.constants.num_batch_to_run]
+        return batch_to_run
+
     def get_found_profiles(sheet):
         worksheet = sheet.get_worksheet(0)
         profiles = worksheet.get_values('B2:B')
