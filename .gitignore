@@ -1,7 +1,7 @@
 google_creds.json
 config.json
 .vscode/
-
+session*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
