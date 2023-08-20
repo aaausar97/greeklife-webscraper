@@ -2,7 +2,9 @@ from argparse import ArgumentParser
 from glob import glob
 from os.path import expanduser
 from platform import system
-from sqlite3 import OperationalError, connect
+from sqlite3 import OperationalError, connect 
+from .firefox_login import login_with_firefox
+import time
 
 try:
     from instaloader import ConnectionException, Instaloader
@@ -47,6 +49,11 @@ if __name__ == "__main__":
     p.add_argument("-c", "--cookiefile")
     p.add_argument("-f", "--sessionfile")
     args = p.parse_args()
+    try:
+        login_with_firefox()
+        time.sleep(5)
+    except Exception as e:
+        raise SystemExit("Firefox login failed: {}".format(e))
     try:
         import_session(args.cookiefile or get_cookiefile(), args.sessionfile)
     except (ConnectionException, OperationalError) as e:

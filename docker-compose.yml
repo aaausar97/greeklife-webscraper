@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  vpn:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    environment:
+      VPNSP: "custom"
+      USER: "purevpn0s12193689"
+      PASSWORD: "ssq11h70"
+      OPENVPN_CUSTOM_CONFIG: "/vpn/vpn_config.ovpn"
+    volumes:
+      - ./vpn_config.ovpn:/vpn/vpn_config.ovpn
+    networks:
+      - vpn_network
+    cap_add:
+      - NET_ADMIN
+    restart: always
+
+  scraper:
+    build: ./app
+    volumes: 
+      - ./app:/app
+    network_mode: "service:vpn"
+    command: tail -f /dev/null
+    restart: always
+
+networks:
+  vpn_network:
