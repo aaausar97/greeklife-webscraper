@@ -16,13 +16,13 @@ class Constants:
         self.sheet_url = config["google_drive"]["sheet_url"]
         self.today = datetime.now()
         self.day_of_week = self.today.weekday()
-        self.num_batch_to_run = self.day_of_week
+        self.num_batch_to_run = 5
 
 
 class Batches(Constants):
     def __init__(self) -> None:
         # a list of 7 empty lists, one for each day of the week
-        self.batches = [ [] for i in range(7) ]
+        self.batches = [ [] for _ in range(7) ]
         self.constants = Constants()
         self.num_batch_to_run = self.constants.num_batch_to_run
         self.batch_emerg = random.randint(0, 6)

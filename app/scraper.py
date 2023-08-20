@@ -47,10 +47,9 @@ def login_to_insta():
 def login_to_insta_2():
     try:
         L.load_session_from_file(username=USERNAME)
-        logging.info('logged in')
     except Exception as e:
-        L.login(USERNAME, PASSWORD)
-        L.save_session_to_file()
+        logging.error('login failed: {}'.format(e))
+        raise e
 
 def refresh_session():
     session_filepath = os.path.join(os.getcwd(), f'session-{USERNAME}')
@@ -95,7 +94,7 @@ def main():
     #gsheet_helper.ready_gsheet(sheet=sheet)
     search = helper.gsheet_helper.get_usernames_from_sheets(sheet=sheet)
     random.shuffle(search)
-    #login_to_insta_2()
+    login_to_insta_2()
     logging.info(f'batch to run: {search}')
     logging.info('scraping')
     k=1

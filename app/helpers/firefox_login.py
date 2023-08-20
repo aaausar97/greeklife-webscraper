@@ -1,19 +1,27 @@
-from selenium_profiles.profiles import profiles
-from selenium.webdriver.common.by import By  # locate elements
-from selenium_driverless import webdriver
 from .helper import constants
-import asyncio
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import os
+import shutil
 import time
 
 USERNAME = constants.USERNAME
 PASSWORD = constants.PASSWORD
 
-options = webdriver.FirefoxOptions()
-profile = profiles.Windows()
+pd = os.path.join(os.getcwd(), 'profile/')
+cookiesDir = os.path.join(pd, 'cookies.sqlite')
 
+options = webdriver.FirefoxOptions()
+options.add_argument("-headless")
+options.add_argument("disable-blink-features=AutomationControlled");
+options.add_argument("--disable-cookie-encryption")
+options.add_argument("window-size=1920,1280");
+options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36");
 
 try:
-    driver = webdriver.Firefox(profile=profile, options=options)
+    driver = webdriver.Firefox(options=options)
+    
 except Exception as e:
     raise SystemExit("Firefox driver failed: {}".format(e))
 
@@ -29,9 +37,12 @@ def login_with_firefox():
     password_input.send_keys(PASSWORD)
 
     # Click login button
-    login_button = driver.find_element(by='xpath', value='//*[@id="loginForm"]/div/div[3]/button')
+    login_button = driver.find_element(By.XPATH, value='//*[@id="loginForm"]/div/div[3]/button')
     login_button.click()
-    time.sleep(10)
+    time.sleep(5)
+    print(driver.current_url)
+    time.sleep(5)
+    driver.get('https://www.instagram.com/')
     print(driver.current_url)
     # Check if login was successful
     if driver.current_url == 'https://www.instagram.com/':
@@ -39,8 +50,11 @@ def login_with_firefox():
     else:
         print('Login failed')
 
-    # Close the driver
-    driver.quit()
+    # Get the cookie file
+    capability = driver.capabilities
+    browserDir = capability['moz:profile']
+    cookieFile = os.path.join(browserDir, 'cookies.sqlite')
+    shutil.copyfile(cookieFile, cookiesDir)
 
 if __name__ == '__main__':
     login_with_firefox()
