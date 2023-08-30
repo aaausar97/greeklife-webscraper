@@ -78,11 +78,11 @@ def post_500_wait():
     time.sleep(delay)
 
 def wait(k):
-    post_scrape_wait = float(helper.constants.BASE + min(random.expovariate(0.6), helper.constants.RAND))
-    wait_time = post_scrape_wait + random.randint(1, k)
-    if k%500 == 0: post_500_wait()
-    elif k%250 == 0: post_250_wait()
-    elif k%100 == 0: post_100_wait()
+    post_scrape_wait = helper.constants.BASE + random.randint(1, helper.constants.RAND) + min(random.expovariate(0.6), 15)
+    wait_time = post_scrape_wait + random.randint(1, k*2)
+    if k%50 == 0: post_500_wait()
+    elif k%30 == 0: post_250_wait()
+    elif k%20 == 0: post_100_wait()
     else:
         print(f'waiting {wait_time} seconds before next scrape')
         time.sleep(wait_time)    
@@ -107,6 +107,7 @@ def main():
         except Exception as e:
             logging.error(f'error: {e}')
             pass
+        time.sleep(20)
         try:
             posts = profile.get_posts()
         except Exception as e:

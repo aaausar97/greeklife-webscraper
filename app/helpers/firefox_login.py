@@ -28,6 +28,7 @@ except Exception as e:
 def login_with_firefox():
     # Navigate to Instagram login page
     driver.get('https://www.instagram.com/accounts/login/') 
+    print(driver.current_url)
     time.sleep(2)
 
     # Enter username and password

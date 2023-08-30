@@ -16,7 +16,7 @@ class Constants:
         self.sheet_url = config["google_drive"]["sheet_url"]
         self.today = datetime.now()
         self.day_of_week = self.today.weekday()
-        self.num_batch_to_run = 5
+        self.num_batch_to_run = self.day_of_week
 
 
 class Batches(Constants):

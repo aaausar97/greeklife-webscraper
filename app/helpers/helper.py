@@ -48,8 +48,8 @@ class gsheet_helper:
         batches_list = batches.batches
         batches_list = batches.batch_profiles_from_list(sheet)
         batch_to_run = batches_list[batches.batch_emerg]
-        if batches.constants.num_batch_to_run:
-            batch_to_run = batches_list[batches.constants.num_batch_to_run]
+        if batches.num_batch_to_run:
+            batch_to_run = batches_list[batches.num_batch_to_run]
         return batch_to_run
 
     def get_found_profiles(sheet):
