@@ -3,7 +3,7 @@ version: '3'
 services:
   vpn:
     image: qmcgaw/gluetun
-    container_name: gluetun
+    container_name: gluetun_scraper
     environment:
       VPNSP: "custom"
       USER: "purevpn0s12193689"
