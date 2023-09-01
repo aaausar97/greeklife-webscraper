@@ -22,8 +22,8 @@ services:
     volumes: 
       - ./app:/app
     network_mode: "service:vpn"
-    command: tail -f /dev/null
-    restart: always
+    depends_on: 
+      - vpn
 
 networks:
   vpn_network:

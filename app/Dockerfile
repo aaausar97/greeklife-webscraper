@@ -42,4 +42,4 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-CMD echo 'scraper service started'
+CMD ["/bin/bash", "run.sh"]

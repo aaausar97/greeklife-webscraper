@@ -1,1 +1,1 @@
-* * * * * root echo "Cron job runs every minute" >> /var/log/cron.log
+* * * * * root echo "cron file installed, running this command every minute"
