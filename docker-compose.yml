@@ -1,29 +1,12 @@
 version: '3'
 
 services:
-  vpn:
-    image: qmcgaw/gluetun
-    container_name: gluetun_scraper
-    environment:
-      VPNSP: "custom"
-      USER: "purevpn0s12193689"
-      PASSWORD: "ssq11h70"
-      OPENVPN_CUSTOM_CONFIG: "/vpn/vpn_config.ovpn"
-    volumes:
-      - ./vpn_config.ovpn:/vpn/vpn_config.ovpn
-    networks:
-      - vpn_network
-    cap_add:
-      - NET_ADMIN
-    restart: always
-
   scraper:
     build: ./app
     volumes: 
       - ./app:/app
-    network_mode: "service:vpn"
-    depends_on: 
-      - vpn
-
-networks:
-  vpn_network:
+    network_mode: "container:gluetun_scraper"
+    restart: on-failure:2
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=America/New_York
