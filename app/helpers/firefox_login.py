@@ -56,6 +56,7 @@ def login_with_firefox():
     browserDir = capability['moz:profile']
     cookieFile = os.path.join(browserDir, 'cookies.sqlite')
     shutil.copyfile(cookieFile, cookiesDir)
+    print('saved cookies')
 
 if __name__ == '__main__':
     login_with_firefox()
