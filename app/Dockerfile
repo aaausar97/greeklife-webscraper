@@ -28,14 +28,6 @@ RUN geckodriver --version
 
 WORKDIR /app
 
-COPY cronconf /etc/cron.d/cronconf
-
-RUN chmod 0644 /etc/cron.d/cronconf && crontab /etc/cron.d/cronconf
-
-RUN touch /var/log/cron.log
-
-RUN cron
-
 COPY requirements.txt .
 
 RUN pip3 install -r requirements.txt
