@@ -28,11 +28,11 @@ docker-compose up
 
 ### Deploy to a server and set up cron docker-compose up/down on a schedule. 
 
-ex:
-```
- 0 4 * * * cd /scraper_dir && docker-compose down
- 5 4 * * * cd /scraper_dir && docker-compose up
-```
+crontab -e
+
+> 0 4 * * * cd /scraper_dir && docker-compose down
+>
+> 5 4 * * * cd /scraper_dir && docker-compose up
 
 This will set stop and remove and running containers at 4:00. At 4:05, the containers will be built and the services will be started.
 
