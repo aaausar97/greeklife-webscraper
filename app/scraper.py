@@ -135,7 +135,7 @@ def main():
             logging.error(f'error: {e}')
             if e.args[0].startswith('Redirected'):
                 time.sleep(2500)
-                sys.exit(1)
+                sys.exit(1) # exit docker handles restart
         except Exception as e:
             logging.error(f'error: {e}')
             wait(k)

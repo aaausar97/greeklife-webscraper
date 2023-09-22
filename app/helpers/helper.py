@@ -63,7 +63,7 @@ class text_helper:
         caption = caption.replace(' ', '').strip()
         phones = re.findall(constants.PHONE_REGEX, caption)
         if image_text:
-            phones_img = re.findall(constants.PHONE_REGEX, image_text) #expand regex for phone numbers
+            phones_img = re.findall(constants.PHONE_REGEX, image_text)
             phones.extend(phones_img)
 
         all_phones = ''
