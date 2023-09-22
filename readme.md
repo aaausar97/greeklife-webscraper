@@ -22,6 +22,19 @@ docker-compose build
 docker-compose up
 ```
 
+## Run on schedule
+
+### Set up cron [https://www.tutorialspoint.com/unix_commands/crontab.htm] in terminal to always run the script at the same time
+
+### Deploy to a server and set up cron docker-compose up/down on a schedule. 
+
+ex:
+ 0 4 * * * cd /scraper_dir && docker-compose down
+ 5 4 * * * cd /scraper_dir && docker-compose up
+
+This will set stop and remove and running containers at 4:00. At 4:05, the containers will be built and the services will be started.
+
+
 ## LOCAL RUN
 
 ### Make sure you have Docker installed on device [https://www.python.org/downloads/]
@@ -48,7 +61,3 @@ docker-compose up
 ## Change Settings
 
 ### some ig, google, and util settings can be adjusted in the config.json file
-
-## Run on schedule
-
-### Set up cron [https://www.tutorialspoint.com/unix_commands/crontab.htm] in terminal to always run the script at the same time
