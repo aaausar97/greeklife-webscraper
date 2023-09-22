@@ -1,8 +1,16 @@
 from argparse import ArgumentParser
+from .firefox_login import login_with_firefox
 from glob import glob
 from os.path import expanduser
 from platform import system
-from sqlite3 import OperationalError, connect
+from sqlite3 import OperationalError, connect 
+import os
+import time
+
+
+pd = os.path.join(os.getcwd(), 'profile')
+cookiesFile = os.path.join(pd, 'cookies.sqlite')
+
 
 try:
     from instaloader import ConnectionException, Instaloader
@@ -11,10 +19,7 @@ except ModuleNotFoundError:
 
 
 def get_cookiefile():
-    default_cookiefile = {
-        "Windows": "~/AppData/Roaming/Mozilla/Firefox/Profiles/*/cookies.sqlite",
-        "Darwin": "~/Library/Application Support/Firefox/Profiles/*/cookies.sqlite",
-    }.get(system(), "~/.mozilla/firefox/*/cookies.sqlite")
+    default_cookiefile = cookiesFile
     cookiefiles = glob(expanduser(default_cookiefile))
     if not cookiefiles:
         raise SystemExit("No Firefox cookies.sqlite file found. Use -c COOKIEFILE.")
@@ -22,8 +27,8 @@ def get_cookiefile():
 
 
 def import_session(cookiefile, sessionfile):
-    print("Using cookies from {}.".format(cookiefile))
     conn = connect(f"file:{cookiefile}?immutable=1", uri=True)
+    print("Using cookies from {}.".format(cookiefile))
     try:
         cookie_data = conn.execute(
             "SELECT name, value FROM moz_cookies WHERE baseDomain='instagram.com'"
@@ -47,6 +52,11 @@ if __name__ == "__main__":
     p.add_argument("-c", "--cookiefile")
     p.add_argument("-f", "--sessionfile")
     args = p.parse_args()
+    try:
+        login_with_firefox()
+        time.sleep(5)
+    except Exception as e:
+        raise SystemExit("Firefox login failed: {}".format(e))
     try:
         import_session(args.cookiefile or get_cookiefile(), args.sessionfile)
     except (ConnectionException, OperationalError) as e:

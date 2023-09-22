@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from itertools import chain, takewhile
 from PIL import Image
-from helpers.weekly_batch import Batches
+from .weekly_batch import Batches
 import io
 import json
 import pytesseract
@@ -48,8 +48,8 @@ class gsheet_helper:
         batches_list = batches.batches
         batches_list = batches.batch_profiles_from_list(sheet)
         batch_to_run = batches_list[batches.batch_emerg]
-        if batches.constants.num_batch_to_run:
-            batch_to_run = batches_list[batches.constants.num_batch_to_run]
+        if batches.num_batch_to_run:
+            batch_to_run = batches_list[batches.num_batch_to_run]
         return batch_to_run
 
     def get_found_profiles(sheet):
@@ -63,7 +63,7 @@ class text_helper:
         caption = caption.replace(' ', '').strip()
         phones = re.findall(constants.PHONE_REGEX, caption)
         if image_text:
-            phones_img = re.findall(constants.PHONE_REGEX, image_text) #expand regex for phone numbers
+            phones_img = re.findall(constants.PHONE_REGEX, image_text)
             phones.extend(phones_img)
 
         all_phones = ''

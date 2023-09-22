@@ -1,6 +1,9 @@
+config.json
 google_creds.json
 .vscode/
-
+app/.vscode/
+app/profile/
+*.ovpn
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

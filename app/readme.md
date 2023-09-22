@@ -1,8 +1,30 @@
 # Greek Life Webscraper
 
-## DO THIS FIRST
+## Launch all services with docker-compose
 
-### Make sure you have Python installed on device [https://www.python.org/downloads/]
+This is the best way to launch an app, it will launch following services:
+
+1) Python Docker Container w/ ./app mounted
+2) Gluetun VPN
+
+### Prerequisites
+
+You need to install Docker and docker-compose, you may find instructions
+for your OS by these links:
+
+- https://docs.docker.com/engine/install/
+- https://docs.docker.com/compose/install/
+
+### Launch
+
+```
+docker-compose build  
+docker-compose up
+```
+
+## LOCAL RUN
+
+### Make sure you have Docker installed on device [https://www.python.org/downloads/]
 
 ### After installing python and pip, open terminal and navigate to directory of script and run the following commands
 

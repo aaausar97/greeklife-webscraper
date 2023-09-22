@@ -1,0 +1,6 @@
+instaloader==4.10
+gspread==5.10.0
+pytesseract==0.3.10
+selenium==4.11.2
+geckodriver-autoinstaller==0.1.0
+webdriver-manager==4.0.0
