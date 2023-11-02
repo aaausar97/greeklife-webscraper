@@ -39,7 +39,7 @@ This will set stop and remove and running containers at 4:00. At 4:05, the conta
 
 ## LOCAL RUN
 
-### Make sure you have Docker installed on device [https://www.python.org/downloads/]
+### Make sure you have Python installed on device [https://www.python.org/downloads/]
 
 ### After installing python and pip, open terminal and navigate to directory of script and run the following commands
 
