@@ -2,6 +2,8 @@ from .helper import constants
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import os
 import shutil
 import time
@@ -27,7 +29,7 @@ except Exception as e:
 
 def login_with_firefox():
     # Navigate to Instagram login page
-    driver.get('https://www.instagram.com/accounts/login/') 
+    driver.get('https://www.instagram.com/') 
     print(driver.current_url)
     time.sleep(2)
 
@@ -42,9 +44,15 @@ def login_with_firefox():
     login_button.click()
     time.sleep(5)
     print(driver.current_url)
+    if 'challenge' in driver.current_url:
+        print('Instagram Challenege. Attempting bypass')
+        dismiss = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//div[@aria-label="Dismiss"]')))
+        print(dismiss)
+        dismiss.click()
+        print(driver.current_url)
     time.sleep(5)
     driver.get('https://www.instagram.com/')
-    print(driver.current_url)
+    # print(driver.current_url)
     # Check if login was successful
     if driver.current_url == 'https://www.instagram.com/':
         print('Login successful')

@@ -6,7 +6,7 @@ services:
     volumes: 
       - ./app:/app
     network_mode: "container:gluetun_scraper"
-    restart: on-failure:2
+    restart: on-failure:10
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=America/New_York

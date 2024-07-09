@@ -122,7 +122,7 @@ def main():
         except exceptions.AbortDownloadException as e:
             logging.error(f'error: {e}')
             if e.args[0].startswith('Redirected'):
-                time.sleep(2500)
+                time.sleep(3750)
                 sys.exit(1)
         except Exception as e:
             logging.error(f'error: {e}')
@@ -134,7 +134,7 @@ def main():
         except exceptions.AbortDownloadException as e:
             logging.error(f'error: {e}')
             if e.args[0].startswith('Redirected'):
-                time.sleep(2500)
+                time.sleep(3750)
                 sys.exit(1)
         except Exception as e:
             logging.error(f'error: {e}')
