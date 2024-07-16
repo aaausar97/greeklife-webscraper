@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
+import requests
 import shutil
 import time
 
@@ -23,13 +24,12 @@ options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple
 
 try:
     driver = webdriver.Firefox(options=options)
-    
 except Exception as e:
     raise SystemExit("Firefox driver failed: {}".format(e))
 
 def login_with_firefox():
     # Navigate to Instagram login page
-    driver.get('https://www.instagram.com/') 
+    driver.get('https://www.instagram.com/')
     print(driver.current_url)
     time.sleep(2)
 
@@ -43,15 +43,18 @@ def login_with_firefox():
     login_button = driver.find_element(By.XPATH, value='//*[@id="loginForm"]/div/div[3]/button')
     login_button.click()
     time.sleep(5)
+    print("attempted login")
     print(driver.current_url)
+
     if 'challenge' in driver.current_url:
         print('Instagram Challenege. Attempting bypass')
         dismiss = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//div[@aria-label="Dismiss"]')))
         print(dismiss)
         dismiss.click()
+        time.sleep(3)
         print(driver.current_url)
     time.sleep(5)
-    driver.get('https://www.instagram.com/')
+    #driver.get('https://www.instagram.com/')
     # print(driver.current_url)
     # Check if login was successful
     if driver.current_url == 'https://www.instagram.com/':
