@@ -74,7 +74,8 @@ class text_helper:
         return all_phones
 
     def extract_text_from_image(url_to_image):
-        response = requests.get(url_to_image)
+        session = requests.Session()
+        response = session.get(url_to_image, proxies={})
         img = Image.open(io.BytesIO(response.content))
         text = pytesseract.image_to_string(img)
         text = text.replace(" ", "")

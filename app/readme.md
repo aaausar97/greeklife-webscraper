@@ -47,7 +47,7 @@ docker-compose up
 
 ## Change Settings
 
-### some ig, google, and util settings can be adjusted in the config.json file
+### some ig, google, proxy, and util settings can be adjusted in the config.json file
 
 ## Run on schedule
 

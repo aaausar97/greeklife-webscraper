@@ -1,4 +1,5 @@
 #!/bin/bash
+# use if you need to login before scraping
 echo "running"
 sleep 5 # wait for vpn container to start
 echo "login script running"

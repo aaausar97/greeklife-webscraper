@@ -5,25 +5,8 @@ services:
     build: ./app
     volumes: 
       - ./app:/app
-    network_mode: "container:gluetun_scraper"
-    restart: always
+    # network_mode: "container:gluetun_scraper"
+    restart: on-failure
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=America/New_York
-      
-  vpn:
-        image: qmcgaw/gluetun:latest
-        container_name: gluetun_scraper
-        restart: always
-        cap_add:
-          - NET_ADMIN
-        environment:
-          - VPN_SERVICE_PROVIDER=custom
-          - OPENVPN_USER=user
-          - OPENVPN_PASSWORD=pass
-          - OPENVPN_CUSTOM_CONFIG=/gluetun/config_file
-        volumes:
-          - ./config_file:/gluetun/vpn_config.ovpn
-
-networks:
-  vpn_network:

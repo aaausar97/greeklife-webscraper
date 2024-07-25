@@ -62,4 +62,4 @@ This will set stop and remove and running containers at 4:00. At 4:05, the conta
 
 ## Change Settings
 
-### some ig, google, and util settings can be adjusted in the config.json file
+### some ig, google, proxy, and util settings can be adjusted in the config.json file
