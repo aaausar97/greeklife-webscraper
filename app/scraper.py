@@ -2,7 +2,7 @@ from helpers import helper
 from helpers.proxies import ProxyContext
 from instaloader import Instaloader, Profile
 from instaloader.exceptions import ProfileNotExistsException, TooManyRequestsException, ConnectionException, LoginRequiredException
-import gspread, logging, os, random, time
+import datetime, gspread, logging, os, random, time
 
 USERNAME = helper.constants.USERNAME
 PASSWORD = helper.constants.PASSWORD
@@ -98,7 +98,7 @@ def scrape_profiles(search, sheet):
         if username == '': continue
         try:
             with ProxyContext():
-                logging.info(f'scraping {username}:{index}')
+                print(f'scraping {username}:{index}')
                 profile = Profile.from_username(L.context, username)
                 posts = profile.get_posts()
         except ProfileNotExistsException:
@@ -126,6 +126,7 @@ def scrape_profiles(search, sheet):
             search.append(username)
             wait(index)
             continue
+        logging.info(f'scraped {username}:{index}')
         rows_to_append = helper.post_helper.scrape_posts(posts=posts)
         update_gsheet(rows_to_append=rows_to_append, sheet=sheet)
         save_username(username)
@@ -134,6 +135,7 @@ def scrape_profiles(search, sheet):
 def update_gsheet(rows_to_append, sheet):
      if rows_to_append:
             helper.gsheet_helper.send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
+            print('sheet updated')
             logging.info('sheet updated')
 
 ### ----- main() ----- 
@@ -142,7 +144,7 @@ def main():
     sheet = sheets_client.open_by_url(helper.constants.SHEET_URL)
     #gsheet_helper.ready_gsheet(sheet=sheet)
     search = get_profiles_to_search(sheet)
-    logging.info('scraping')
+    print('scraping')
     scrape_profiles(search=search, sheet=sheet)
     print('scraping complete')
     delete_search_file('usernames.txt')
