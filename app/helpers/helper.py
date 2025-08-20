@@ -7,6 +7,8 @@ import json
 import pytesseract
 import re
 import requests
+import os
+import time
 
 
 with open('config.json', 'r') as f:
@@ -25,6 +27,13 @@ class constants:
     USERNAME = config["instagram"]["username"]
     PASSWORD = config["instagram"]["password"]
 
+    BACKEND_URL = config["backend"]["url"]
+    BACKEND_USERNAME = config["backend"].get("username")
+    BACKEND_PASSWORD = config["backend"].get("password")
+    BACKEND_AUTH_TYPE = config["backend"].get("auth_type", "basic")  # "basic" or "bearer"
+    BACKEND_TOKEN = config["backend"].get("token")  # used when auth_type == "bearer"
+    BACKEND_LOGIN_PATH = config["backend"].get("login_path")  # optional: path to obtain token with {username,password}
+    
     EMAIL_REGEX = r'[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+'
     PHONE_REGEX = r'\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})'
     TAGGED_REGEX = r'\B@[\w\.-]+'
@@ -75,12 +84,18 @@ class text_helper:
 
     def extract_text_from_image(url_to_image):
         session = requests.Session()
-        response = session.get(url_to_image, proxies={})
-        img = Image.open(io.BytesIO(response.content))
-        text = pytesseract.image_to_string(img)
-        text = text.replace(" ", "")
-        text = text.strip()
-        return text
+        # Minimal retries and error handling; no extra config
+        for _ in range(3):
+            try:
+                response = session.get(url_to_image, timeout=10)
+                img = Image.open(io.BytesIO(response.content))
+                text = pytesseract.image_to_string(img)
+                text = text.strip()
+                return text
+            except Exception:
+                time.sleep(1)
+                continue
+        return ""
 
 class post_helper:
     def scrape_video(post):
@@ -93,16 +108,19 @@ class post_helper:
         post_video_url = post.video_url
         image_text = text_helper.extract_text_from_image(post_thumbnail_url)
         phone = text_helper.get_phones(caption=post_caption, image_text=image_text)
-        values_to_append = [str(post.date_local), 
-                            str(profile_username), 
-                            str(profile_full_name), 
-                            str(phone), 
+        raw_content = f"{post_caption}\n{image_text}".strip()
+        values_to_append = [post.date_local, 
+                            profile_username, 
+                            profile_full_name, 
+                            phone, 
                             '',
                             '',
-                            str(post_caption), 
-                            str(image_text),
-                            str(post_url), 
-                            str(post_video_url)]
+                            post_caption, 
+                            image_text,
+                            post_url, 
+                            post_thumbnail_url,
+                            '',
+                            raw_content]
         if not phone:
             return None
         return values_to_append
@@ -116,29 +134,37 @@ class post_helper:
         post_pic_url = post.url
         image_text = text_helper.extract_text_from_image(post_pic_url)
         phone = text_helper.get_phones(caption=post_caption, image_text=image_text)
-        values_to_append = [str(post.date_local), 
-                            str(profile_username), 
-                            str(profile_full_name), 
-                            str(phone), 
+        raw_content = f"{post_caption}\n{image_text}".strip()
+        values_to_append = [post.date_local, 
+                            profile_username, 
+                            profile_full_name, 
+                            phone, 
                             '', 
                             '', 
-                            str(post_caption), 
-                            str(image_text),
-                            str(post_url), 
-                            str(post_pic_url)]   
+                            post_caption, 
+                            image_text,
+                            post_url, 
+                            post_pic_url,
+                            '',
+                            raw_content]   
         if not phone:
             return None
         return values_to_append
 
     def scrape_posts(posts):
         rows_to_append = []
-        for post in takewhile(lambda p: p.date_utc >= constants.UNTIL, posts):
-            print(post)
-            if post.is_video:
-                row_to_append = post_helper.scrape_video(post)
-            else:
-                row_to_append = post_helper.scrape_pic(post)
-            if row_to_append:
-                rows_to_append.append(row_to_append)
+        try:
+            for post in takewhile(lambda p: p.date_utc >= constants.UNTIL, posts):
+                print(post)
+                if post.is_video:
+                    row_to_append = post_helper.scrape_video(post)
+                else:
+                    row_to_append = post_helper.scrape_pic(post)
+                if row_to_append:
+                    rows_to_append.append(row_to_append)
+        except Exception:
+            # swallow pagination/iteration errors and continue
+            pass
         return rows_to_append
+
 

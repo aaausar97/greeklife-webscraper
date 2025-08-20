@@ -1,8 +1,9 @@
 from helpers import helper
+from helpers.agent_backend import AgentBackendClient
 from helpers.proxies import ProxyContext
 from instaloader import Instaloader, Profile
 from instaloader.exceptions import ProfileNotExistsException, TooManyRequestsException, ConnectionException, LoginRequiredException
-import datetime, gspread, logging, os, random, time
+import datetime, gspread, logging, os, random, requests, time
 
 USERNAME = helper.constants.USERNAME
 PASSWORD = helper.constants.PASSWORD
@@ -94,6 +95,8 @@ def get_profiles_to_search(sheet):
     return search
 
 def scrape_profiles(search, sheet):
+    all_rows_to_append = []
+    count = 0
     for index, username in enumerate(search, start=1):
         if username == '': continue
         try:
@@ -127,16 +130,37 @@ def scrape_profiles(search, sheet):
             wait(index)
             continue
         logging.info(f'scraped {username}:{index}')
-        rows_to_append = helper.post_helper.scrape_posts(posts=posts)
-        update_gsheet(rows_to_append=rows_to_append, sheet=sheet)
-        save_username(username)
+        try:
+            with ProxyContext():
+                rows_to_append = helper.post_helper.scrape_posts(posts=posts)
+            # update_gsheet(rows_to_append=rows_to_append, sheet=sheet)
+            if rows_to_append:
+                count += 1
+                all_rows_to_append.extend(rows_to_append)
+            save_username(username)
+        except Exception as e:
+            logging.error(f'error processing {username}: {e}', exc_info=True)
+            continue    
         #wait(index)
+    return all_rows_to_append, count
 
 def update_gsheet(rows_to_append, sheet):
      if rows_to_append:
             helper.gsheet_helper.send_data_to_sheets(rows_to_append=rows_to_append, sheet=sheet)
             print('sheet updated')
             logging.info('sheet updated')
+
+def send_to_backend(rows_to_append, backend_url, auth_username=None, auth_password=None, auth_type='bearer', token=None, login_path='/login', chunk_size=300, timeout_seconds=20):
+    client = AgentBackendClient(
+        base_url=backend_url,
+        username=auth_username,
+        password=auth_password,
+        token=token,
+        login_path=login_path,
+        chunk_size=chunk_size,
+        timeout_seconds=timeout_seconds,
+    )
+    return client.ingest(rows_to_append)
 
 ### ----- main() ----- 
 
@@ -145,10 +169,25 @@ def main():
     #gsheet_helper.ready_gsheet(sheet=sheet)
     search = get_profiles_to_search(sheet)
     print('scraping')
-    scrape_profiles(search=search, sheet=sheet)
+    all_rows, count = scrape_profiles(search=search, sheet=sheet)
+    if all_rows:
+        send_to_backend(
+            rows_to_append=all_rows,
+            backend_url=helper.constants.BACKEND_URL,
+            auth_username=helper.constants.BACKEND_USERNAME,
+            auth_password=helper.constants.BACKEND_PASSWORD,
+            auth_type='bearer',
+            token=helper.constants.BACKEND_TOKEN,
+            login_path=helper.constants.BACKEND_LOGIN_PATH or '/login'
+        )
+    print(f'scraped {count} profiles')
     print('scraping complete')
     delete_search_file('usernames.txt')
     logging.info('scraping complete')
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.error(f"Unhandled error in scraper: {e}", exc_info=True)
+        print("Unhandled error occurred; exiting gracefully.")
